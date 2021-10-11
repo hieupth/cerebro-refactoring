@@ -27,7 +27,7 @@ from cerebro.refactoring.objects import Object
 from cerebro.refactoring.designs import Singleton
 
 
-class Encoder(Object, metaclass=Singleton):
+class Serializer(Object, metaclass=Singleton):
     """
     Encoder can serialize objects into object data. The encoder will be a singleton
     to reduce memory consuming.
@@ -46,7 +46,7 @@ class Encoder(Object, metaclass=Singleton):
         return instance.data(**kwargs) if isinstance(instance, Object) else None
 
 
-class Decoder(Object, metaclass=Singleton):
+class Deserializer(Object, metaclass=Singleton):
     """
     Decoder can deserialize object data into objects. The decoder will be a singleton
     to reduce memory consuming.

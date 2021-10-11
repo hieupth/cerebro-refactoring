@@ -22,5 +22,51 @@
 #  SOFTWARE.
 # ------------------------------------------------------------------------------
 
-from .meta import Meta
-from .object import Object
+from cerebro.refactoring.objects import Meta
+
+
+class Object(metaclass=Meta):
+    """
+    This is base class of all objects in package.
+    ---------
+    @author:    Hieu Pham.
+    @created:   10.10.2021.
+    @updated:   11.10.2021.
+    """
+
+    @property
+    def name(self):
+        """
+        Get object name.
+        :return: object name.
+        """
+        return self._name
+
+    @name.setter
+    def name(self, value: str = None):
+        """
+        Set object name.
+        :param value: given name.
+        :return:      none.
+        """
+        self._name = value
+
+    def __init__(self, name: str = None, **kwargs):
+        """
+        Create new object.
+        :param name:    object name.
+        :param kwargs:  keyword arguments.
+        """
+        super(Object, self).__init__()
+        self._name = name
+
+    def data(self, **kwargs) -> dict:
+        """
+        Generate object data.
+        :param kwargs:  keyword arguments.
+        :return:        object data.
+        """
+        data = {'classname': self.__class__.__name__, 'module': self.__module__}
+        if self._name is not None:
+            data.update({'name': self._name})
+        return data

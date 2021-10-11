@@ -48,6 +48,7 @@ setup(
     namespace_packages=['cerebro'],
     version='0.1.3.3',
     license='MIT',
+    zip_safe=True,
     description='Provide systematic process of improving code without creating new functionality that can transform '
                 'a mess into clean code and simple design.',
     long_description=get_readme_description('README.md'),

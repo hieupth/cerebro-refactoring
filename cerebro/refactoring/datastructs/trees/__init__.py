@@ -22,4 +22,4 @@
 #  SOFTWARE.
 # ------------------------------------------------------------------------------
 
-from .general import TreeNode
+from .general import Tree

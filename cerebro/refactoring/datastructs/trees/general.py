@@ -22,10 +22,11 @@
 #  SOFTWARE.
 # ------------------------------------------------------------------------------
 
+from typing import Union, List
 from cerebro.refactoring.objects import Object
 
 
-class TreeNode(Object):
+class Tree(Object):
     """
     This is base node to build general tree. The tree node can have children nodes.
     ---------
@@ -78,12 +79,12 @@ class TreeNode(Object):
         return self._index
 
     @property
-    def nodes(self):
+    def children(self):
         """
         Get children nodes.
         :return: children nodes.
         """
-        return [node for node in self._nodes]
+        return [node for node in self._children]
 
     @property
     def is_leaf(self):
@@ -91,21 +92,22 @@ class TreeNode(Object):
         Check if this is a leaf.
         :return: is leaf.
         """
-        return len(self._nodes) == 0
+        return len(self._children) == 0
 
-    def __init__(self, nodes=None, **kwargs):
+    def __init__(self, children=None, **kwargs):
         """
         Create new object.
-        "param nodes:   children nodes.
-        :param kwargs:  keyword arguments.
+        "param children: children nodes.
+        :param kwargs:   keyword arguments.
         """
-        super(TreeNode, self).__init__(**kwargs)
+        super(Tree, self).__init__(**kwargs)
         # Initialize attributes.
         self._parent = None
         self._level = 0
         self._index = 0
         # Attach children nodes.
-        self._nodes = list()
+        self._children = list()
+        self.attach(children=children, **kwargs)
 
     def data(self, **kwargs) -> dict:
         """
@@ -115,32 +117,32 @@ class TreeNode(Object):
         """
         data = super().data(**kwargs)
         if not self.is_leaf:
-            data.update({'nodes': [node.data(**kwargs) for node in self._nodes]})
+            data.update({'children': [node.data(**kwargs) for node in self._children]})
         return data
 
-    def attach(self, nodes=None, **kwargs):
+    def attach(self, children=None, **kwargs):
         """
-        Attach node(s) to tree.
-        :param nodes:   node(s) to be attached.
-        :param kwargs:  additional keyword arguments.
-        :return:        node(s).
+        Attach children node(s) to tree.
+        :param children:   node(s) to be attached.
+        :param kwargs:     additional keyword arguments.
+        :return:           node(s).
         """
-        if nodes is None:
+        if children is None:
             return self, None
         # Attach single node.
-        elif isinstance(nodes, TreeNode):
-            nodes._parent = self
-            nodes._level = self._level + 1
-            nodes._index = len(self._nodes)
-            self._nodes.append(nodes)
-            return self, nodes
+        elif isinstance(children, Tree):
+            children._parent = self
+            children._level = self._level + 1
+            children._index = len(self._children)
+            self._children.append(children)
+            return self, children
         # Attach list of nodes
-        elif isinstance(nodes, list):
-            return self, [self.attach(node, **kwargs)[-1] for node in nodes]
+        elif isinstance(children, list):
+            return self, [self.attach(node, **kwargs)[-1] for node in children]
         # Otherwise raise error because of invalid nodes.
         raise TypeError("Tree can only attach tree node(s).")
 
-    def detach(self, indexes=None, **kwargs):
+    def detach(self, indexes: Union[None, int, List[int]] = None, **kwargs):
         """
         Detach node(s) from tree.
         :param indexes: index(es) of node(s) to be detached.
@@ -151,12 +153,12 @@ class TreeNode(Object):
             return self, None
         # Detach single node.
         elif isinstance(indexes, int):
-            node = self._nodes.pop(indexes)
+            node = self._children.pop(indexes)
             node._parent = None
             node._level = 0
             node._index = 0
-            for i in range(len(self._nodes)):
-                self._nodes[i]._index = i
+            for i in range(len(self._children)):
+                self._children[i]._index = i
             return self, node
         # Detach list of indexes.
         elif isinstance(indexes, list):
@@ -169,9 +171,9 @@ class TreeNode(Object):
         Clean all children.
         :param kwargs:  keyword arguments.
         """
-        return self.detach([i for i in range(len(self._nodes))])
+        return self.detach([i for i in range(len(self._children))])
 
-    def move(self, steps=None, **kwargs):
+    def move(self, steps: Union[None, int, List[int]] = 0, **kwargs):
         """
         Move to another node from current node.
         :param steps:   steps to go.
@@ -179,13 +181,13 @@ class TreeNode(Object):
         :return:        destination node.
         """
         if steps is None:
-            return self
+            return self.root
         # Go single step.
         elif isinstance(steps, int):
             current = self
             # Go forward.
             if steps > 0:
-                current = self._nodes[steps]
+                current = self._children[steps]
             # Go backward.
             elif steps < 0:
                 move = abs(steps)

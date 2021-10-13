@@ -46,7 +46,7 @@ setup(
     name='cerebro-refactoring',
     packages=find_packages(),
     namespace_packages=['cerebro'],
-    version='0.1.3.3',
+    version='0.1.3.4',
     license='MIT',
     zip_safe=True,
     description='Provide systematic process of improving code without creating new functionality that can transform '

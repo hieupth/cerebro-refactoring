@@ -22,8 +22,10 @@
 #  SOFTWARE.
 # ------------------------------------------------------------------------------
 
+from copy import copy
 from typing import Union, List
 from cerebro.refactoring.objects import Object
+from cerebro.refactoring.datastructs import Stack
 
 
 class Tree(Object):
@@ -63,20 +65,12 @@ class Tree(Object):
         return node
 
     @property
-    def level(self):
+    def is_leaf(self):
         """
-        Get node level.
-        :return: node level.
+        Check if this is a leaf.
+        :return: is leaf.
         """
-        return self._level
-
-    @property
-    def index(self):
-        """
-        Get node index.
-        :return: node index.
-        """
-        return self._index
+        return len(self._children) == 0
 
     @property
     def children(self):
@@ -84,15 +78,15 @@ class Tree(Object):
         Get children nodes.
         :return: children nodes.
         """
-        return [node for node in self._children]
+        return None if self.is_leaf else [child for child in self._children]
 
     @property
-    def is_leaf(self):
+    def coordinate(self):
         """
-        Check if this is a leaf.
-        :return: is leaf.
+        Get node coordinate.
+        :return: node coordinate.
         """
-        return len(self._children) == 0
+        return self._coordinate
 
     def __init__(self, children=None, **kwargs):
         """
@@ -103,11 +97,10 @@ class Tree(Object):
         super(Tree, self).__init__(**kwargs)
         # Initialize attributes.
         self._parent = None
-        self._level = 0
-        self._index = 0
+        self._coordinate = tuple([0])
         # Attach children nodes.
         self._children = list()
-        self.attach(children=children, **kwargs)
+        self.attach(children)
 
     def data(self, **kwargs) -> dict:
         """
@@ -120,6 +113,19 @@ class Tree(Object):
             data.update({'children': [node.data(**kwargs) for node in self._children]})
         return data
 
+    def reindex(self):
+        """
+        Reindex node and all of its children.
+        :return:    none.
+        """
+        if self.is_root:
+            self._coordinate = tuple([0])
+        else:
+            parent = self.parent
+            self._coordinate = list(parent.coordinate)
+            self._coordinate.append(len(parent._children) - 1)
+            self._coordinate = tuple(self._coordinate)
+
     def attach(self, children=None, **kwargs):
         """
         Attach children node(s) to tree.
@@ -128,19 +134,18 @@ class Tree(Object):
         :return:           node(s).
         """
         if children is None:
-            return self, None
+            return None
         # Attach single node.
         elif isinstance(children, Tree):
-            children._parent = self
-            children._level = self._level + 1
-            children._index = len(self._children)
             self._children.append(children)
-            return self, children
+            children._parent = self
+            children.reindex()
+            return children
         # Attach list of nodes
         elif isinstance(children, list):
-            return self, [self.attach(node, **kwargs)[-1] for node in children]
+            return [self.attach(child, **kwargs) for child in children]
         # Otherwise raise error because of invalid nodes.
-        raise TypeError("Tree can only attach tree node(s).")
+        raise TypeError("Tree can only attach tree node(s)")
 
     def detach(self, indexes: Union[None, int, List[int]] = None, **kwargs):
         """
@@ -153,56 +158,74 @@ class Tree(Object):
             return self, None
         # Detach single node.
         elif isinstance(indexes, int):
-            node = self._children.pop(indexes)
-            node._parent = None
-            node._level = 0
-            node._index = 0
-            for i in range(len(self._children)):
-                self._children[i]._index = i
-            return self, node
+            child = self._children.pop(indexes)
+            child._parent = None
+            child.reindex()
+            self.reindex()
+            return child
         # Detach list of indexes.
         elif isinstance(indexes, list):
-            return self, [self.detach(i, **kwargs)[-1] for i in indexes]
+            return self, [self.detach(i, **kwargs) for i in indexes]
         # Otherwise raise error because of invalid indexes.
-        raise TypeError("Tree can only detach node(s) base on index(es) of them.")
+        raise TypeError("Tree can only detach node(s) base on index(es) of them")
 
     def clean(self, **kwargs):
         """
         Clean all children.
         :param kwargs:  keyword arguments.
         """
-        return self.detach([i for i in range(len(self._children))])
+        return self.detach([i for i in range(len(self._children))], **kwargs)
 
-    def move(self, steps: Union[None, int, List[int]] = 0, **kwargs):
+    def step(self, steps: Union[None, int, List[int]] = 0, **kwargs):
         """
-        Move to another node from current node.
+        Step to another node from current node.
         :param steps:   steps to go.
         :param kwargs:  keyword arguments.
         :return:        destination node.
         """
         if steps is None:
-            return self.root
+            return self
         # Go single step.
         elif isinstance(steps, int):
             current = self
             # Go forward.
-            if steps > 0:
+            if steps >= 0:
+                if steps >= len(self._children):
+                    raise IndexError("Out of tree index")
                 current = self._children[steps]
             # Go backward.
             elif steps < 0:
                 move = abs(steps)
-                if move < self.level:
-                    for _ in range(move):
-                        current = current.parent
-                else:
-                    raise IndexError("Out of tree index.")
+                if move >= len(self._coordinate):
+                    raise IndexError("Out of tree index")
+                for _ in range(move):
+                    current = current.parent
             # Return result
             return current
         # Go list of steps.
         elif isinstance(steps, list):
             current = self
             for step in steps:
-                current = current.go(step, **kwargs)
+                current = current.step(step, **kwargs)
             return current
         # Otherwise raise error because of invalid steps.
-        raise TypeError("Can only move on tree based on integer step(s).")
+        raise TypeError("Can only move on tree based on integer step(s)")
+
+    def go(self, coordinates: tuple = (0), **kwargs):
+        """
+        Go to another node by coordinate.
+        :param coordinates: coordinate to go.
+        :param kwargs:      keyword arguments.
+        :return:            node.
+        """
+        current = self
+        for i, v in enumerate(coordinates):
+            if v < 0:
+                raise ValueError("Tree coordinate cannot be negative")
+            if i == 0:
+                if v != 0:
+                    raise IndexError("Out of tree coordinate")
+                current = current.root
+                continue
+            current = current.step(v, **kwargs)
+        return current

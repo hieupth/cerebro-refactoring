@@ -22,5 +22,5 @@
 #  SOFTWARE.
 # ------------------------------------------------------------------------------
 
+from .component import Component
 from .batchprocess import BatchProcess
-

@@ -57,7 +57,7 @@ class Singleton(Meta):
             # release may then enter this section. But since the Singleton field
             # is already initialized, the thread won't create a new object.
             if cls not in cls._instances:
-                instance = super().__call__(__safe__=False, *args, **kwargs)
+                instance = super().__call__(*args, **kwargs)
                 cls._instances[cls] = instance
         # Return result.
         return cls._instances[cls]

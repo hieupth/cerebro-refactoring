@@ -27,7 +27,7 @@
 try:
     import pkg_resources
     pkg_resources.declare_namespace(__name__)
-# There might cause an import error because Python 2.x does not work with the
+# An import error might appear because Python 2.x does not work with the
 # pkg_resources so we will use the pkgutil package instead.
 except ImportError:
     import pkgutil

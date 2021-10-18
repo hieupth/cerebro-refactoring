@@ -22,4 +22,5 @@
 #  SOFTWARE.
 # ------------------------------------------------------------------------------
 
-from .log import Log
+from .base import Serializer, Deserializer
+from .json import JsonSerializer, JsonDeserializer

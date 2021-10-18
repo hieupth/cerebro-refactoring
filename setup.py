@@ -30,8 +30,8 @@ from setuptools import find_packages
 def get_readme_description(src: str = 'README.md'):
     """
     Get readme description.
-    :param src:     readme source file.
-    :return:        readme description.
+    :param src: readme file.
+    :return:    description.
     """
     if sys.version_info[0] < 3:
         with open(src) as f:
@@ -46,7 +46,7 @@ setup(
     name='cerebro-refactoring',
     packages=find_packages(),
     namespace_packages=['cerebro'],
-    version='0.1.3.6',
+    version='0.1.3.7',
     license='MIT',
     zip_safe=True,
     description='Provide systematic process of improving code without creating new functionality that can transform '
@@ -56,7 +56,7 @@ setup(
     author='Hieu Pham',
     author_email='hieupt.ai@gmail.com',
     url='https://github.com/hieupth/cerebro-refactoring',
-    download_url='https://github.com/hieupth/cerebro-refactoring/archive/v_02.tar.gz',
+    download_url='https://github.com/hieupth/cerebro-refactoring/archive/v_01.tar.gz',
     keywords=['refactoring', 'data structures', 'design patterns'],
     install_requires=[],
     classifiers=[

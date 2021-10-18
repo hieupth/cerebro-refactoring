@@ -23,8 +23,8 @@
 # ------------------------------------------------------------------------------
 
 import json
-from .base import Serializer, Deserializer
-from cerebro.refactoring.objects import Object
+from cerebro.refactoring import Object
+from cerebro.refactoring.serializations import Serializer, Deserializer
 from json import JSONEncoder as BaseJsonEncoder, JSONDecoder as BaseJsonDecoder
 
 

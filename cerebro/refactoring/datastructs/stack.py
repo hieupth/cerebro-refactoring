@@ -23,7 +23,7 @@
 # ------------------------------------------------------------------------------
 
 from typing import Any
-from cerebro.refactoring.objects import Object
+from cerebro.refactoring import Object
 
 
 class Stack(Object):

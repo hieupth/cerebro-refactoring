@@ -22,8 +22,8 @@
 #  SOFTWARE.
 # ------------------------------------------------------------------------------
 
+from cerebro.refactoring import Object
 from importlib import import_module
-from cerebro.refactoring.objects import Object
 from cerebro.refactoring.designs import Singleton
 
 
@@ -34,7 +34,7 @@ class Serializer(Object, metaclass=Singleton):
     ---------
     @author:    Hieu Pham.
     @created:   10.10.2021.
-    @updated:   11.10.2021.
+    @updated:   18.10.2021.
     """
     def data(self, instance: Object = None, **kwargs) -> dict:
         """
@@ -53,9 +53,10 @@ class Deserializer(Object, metaclass=Singleton):
     ---------
     @author:    Hieu Pham.
     @created:   10.10.2021.
-    @updated:   11.10.2021.
+    @updated:   18.10.2021.
     """
-    def create(self, data: dict = None, **kwargs):
+    @classmethod
+    def create(cls, data: dict = None, **kwargs):
         """
         Create object from data.
         :param data:    object data.

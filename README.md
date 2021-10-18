@@ -1,8 +1,8 @@
-# Cerebro Refactoring
+# Cerebro Refactor Package
 Refactoring is a systematic process of improving code without creating new functionality that can transform a mess into 
 clean code and simple design.
 <br><br>
-Refactoring is the core of [Cerebro](https://github.com/hieupth/cerebro) because we build everything with engineering mindset which means clean code and good 
+Refactoring is a core package of [Cerebro](https://github.com/hieupth/cerebro) because we build everything with engineering mindset which means clean code and good 
 software architect is our top concern.
 <br><br>
 We focus on the package in Python because it is our first programming language but we are working hard to make 

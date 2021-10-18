@@ -22,9 +22,9 @@
 #  SOFTWARE.
 # ------------------------------------------------------------------------------
 
+from cerebro.refactoring import Object
 from abc import ABC, abstractmethod
 from typing import Any, Union, List
-from cerebro.refactoring.objects import Object
 
 
 class BatchProcess(Object, ABC):
@@ -34,7 +34,7 @@ class BatchProcess(Object, ABC):
     ---------
     @author:    Hieu Pham.
     @created:   15.10.2021.
-    @updated:   15.10.2021.
+    @updated:   18.10.2021.
     """
 
     def batch_process(self, payload: Union[Any, List[Any]] = None, **kwargs):

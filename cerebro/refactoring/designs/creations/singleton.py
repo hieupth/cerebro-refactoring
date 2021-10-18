@@ -22,7 +22,7 @@
 #  SOFTWARE.
 # ------------------------------------------------------------------------------
 
-from cerebro.refactoring.objects import Meta
+from cerebro.refactoring import Meta
 
 
 class Singleton(Meta):
@@ -31,7 +31,7 @@ class Singleton(Meta):
     ---------
     @author:    Hieu Pham.
     @created:   25.09.2021.
-    @updated:   10.10.2021.
+    @updated:   18.10.2021.
     """
 
     # We will keep created instance.

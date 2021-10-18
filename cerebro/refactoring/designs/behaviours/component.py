@@ -34,19 +34,19 @@ class Component(Tree):
     ---------
     @author:    Hieu Pham.
     @created:   15.10.2021.
-    @updated:   17.10.2021.
+    @updated:   18.10.2021.
     """
 
     def __init__(self, prior: int = 1, sociable: bool = True, **kwargs):
         """
         Create new instance.
         :param prior:       priority of process.
-        :param sociable:    update result from mates.
-        :param kwargs:      keyword arguments.
+        :param sociable:    update result from siblings.
+        :param kwargs:      additional keyword arguments.
         """
-        super().__init__(**kwargs)
         self.prior = prior
         self.sociable = sociable
+        super().__init__(**kwargs)
 
     def __call__(self, *args, **kwargs) -> Union[None, dict]:
         """
@@ -56,12 +56,22 @@ class Component(Tree):
         :return:        result data.
         """
         inputs = copy(kwargs)
+        # In case of priority is negative, process as preorder.
         if self.prior < 0:
-            kwargs.update(self.process(**kwargs))
-        for child in self._children:
-            kwargs.update(child(**kwargs) if child.sociable else child(**inputs))
+            outputs = self.process(**kwargs)
+            if isinstance(outputs, dict):
+                kwargs.update(outputs)
+        # Process all children components.
+        for child in self.nodes:
+            outputs = child(**kwargs) if child.sociable else child(**inputs)
+            if isinstance(outputs, dict):
+                kwargs.update(outputs)
+        # In case of priority is positive, process as postorder.
         if self.prior > 0:
-            kwargs.update(self.process(**kwargs))
+            outputs = self.process(**kwargs)
+            if isinstance(outputs, dict):
+                kwargs.update(outputs)
+        # Return result.
         return kwargs
 
     def process(self, **kwargs) -> Union[None, Dict]:
@@ -70,7 +80,7 @@ class Component(Tree):
         :param kwargs:  keyword arguments.
         :return:        result data.
         """
-        return None
+        return dict()
 
     def data(self, **kwargs) -> dict:
         """

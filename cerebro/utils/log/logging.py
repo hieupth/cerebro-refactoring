@@ -25,6 +25,7 @@
 import os
 import logging
 import matplotlib.pyplot as plt
+from cerebro.utils.io import Path
 from cerebro.refactoring.designs import Singleton
 
 
@@ -130,6 +131,7 @@ class Log(metaclass=Singleton):
             plt.show()
             if filename is not None:
                 file = os.path.join(self._dir, filename)
+                file = Path(file).unique_suffix().path
                 os.makedirs(os.path.dirname(file), exist_ok=True)
                 figure.savefig(file)
         return self

@@ -24,6 +24,7 @@
 
 import os
 import shutil
+from copy import copy
 from datetime import datetime
 from pathlib import Path as BasePath
 
@@ -156,8 +157,9 @@ class Path:
             stem = [self._path.stem, '-%s' % count if count > 0 else '']
             stem.extend(list(self._path.suffixes))
             stem = ''.join(stem)
-            parts.append(stem)
-            new_path = BasePath(*parts)
+            new_parts = copy(parts)
+            new_parts.append(stem)
+            new_path = BasePath(*new_parts)
             if new_path.is_dir() or new_path.is_file():
                 count += 1
                 continue
